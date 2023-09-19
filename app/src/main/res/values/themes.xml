@@ -1,0 +1,20 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MyVideoTriming" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="sliderStyle">@style/CustomSlider</item>
+    </style>
+
+    <style name="Theme.MyVideoTriming" parent="Base.Theme.MyVideoTriming" />
+
+    <style name="CustomThumb">
+        <item name="android:background">@drawable/baseline_content_cut_24</item>
+        <!-- Add other attributes as needed -->
+    </style>
+
+    <style name="CustomSlider" parent="Widget.MaterialComponents.Slider">
+        <item name="android:thumb">@style/CustomThumb</item>
+    </style>
+
+</resources>
