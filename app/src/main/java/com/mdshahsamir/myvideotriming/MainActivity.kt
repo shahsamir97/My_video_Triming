@@ -25,64 +25,34 @@ class MainActivity : AppCompatActivity() {
 
         leftBarInitialWidth = binding.leftBar.width
         rightBarInitialWidth = binding.rightBar.width
-        displayLog("RightBar Init X : " + binding.leftBar.x)
 
 
-        binding.leftBar.setOnTouchListener(object : View.OnTouchListener{
+        binding.leftBar.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(view: View, event: MotionEvent?): Boolean {
                 when (event?.action) {
                     MotionEvent.ACTION_DOWN -> isDragging = true
 
                     MotionEvent.ACTION_MOVE -> if (isDragging) {
-                        var newWidth = (event.x - view.x).toInt()
-                        displayLog("Event X : " + event.x)
-                        displayLog("View X : " + view.x)
-                        displayLog("LeftBar New Width : " + newWidth)
-
-                        if (newWidth < 100) {
-                            newWidth = 100
-                        }
-
-                        val layoutParams = view.layoutParams
-                        layoutParams.width = newWidth
-                        view.layoutParams = layoutParams
+                        if (binding.rightBar.x > event.rawX + view.width)
+                            view.x = event.rawX
                     }
 
-                    MotionEvent.ACTION_CANCEL -> isDragging = false
+                    MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> isDragging = false
                 }
 
                 return true
             }
         })
 
-        val layoutWidth = binding.frameLayout.width
         binding.rightBar.setOnTouchListener(object : View.OnTouchListener{
             override fun onTouch(view: View, event: MotionEvent?): Boolean {
                 when (event?.action) {
                     MotionEvent.ACTION_DOWN -> isDragging = true
 
                     MotionEvent.ACTION_MOVE -> if (isDragging) {
-//                        val newWidth = layoutWidth - event.x.toInt()
-//                        displayLog("Event X : " + event.x)
-//                        displayLog("Layout X : " + layoutWidth)
-//                        displayLog("RightBar New Width : " + newWidth)
-//
-//                            val params = binding.rightBar.layoutParams
-//                            params.width = newWidth
-//                            view.layoutParams = params
-                        var newWidth = (event.x - view.x).toInt()
-                        displayLog("Event X : " + event.x)
-                        displayLog("View X : " + view.x)
-                        displayLog("LeftBar New Width : " + newWidth)
-
-                        if (newWidth < 100) {
-                            newWidth = 100
-                        }
-
-                        val layoutParams = view.layoutParams
-                        layoutParams.width = newWidth
-                        view.layoutParams = layoutParams
+                        view.x = event.rawX
                     }
+
                     MotionEvent.ACTION_UP,
                     MotionEvent.ACTION_CANCEL -> isDragging = false
                 }
