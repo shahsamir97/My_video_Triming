@@ -5,9 +5,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintSet.Motion
 import com.mdshahsamir.myvideotriming.databinding.ActivityMainBinding
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -50,6 +48,7 @@ class MainActivity : AppCompatActivity() {
                     MotionEvent.ACTION_DOWN -> isDragging = true
 
                     MotionEvent.ACTION_MOVE -> if (isDragging) {
+                        if (binding.leftBar.x < event.rawX - view.width)
                         view.x = event.rawX
                     }
 
