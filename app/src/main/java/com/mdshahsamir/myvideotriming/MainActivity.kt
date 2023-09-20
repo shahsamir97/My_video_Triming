@@ -1,21 +1,16 @@
 package com.mdshahsamir.myvideotriming
 
-import android.R.attr.x
-import android.R.attr.y
 import android.os.Bundle
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.mdshahsamir.myvideotriming.databinding.ActivityMainBinding
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val TAG = this::class.simpleName
-    private var lastX = 0
-    private var lastY = 0
+    private var frameLayoutWidth = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,11 +20,14 @@ class MainActivity : AppCompatActivity() {
 
         binding.leftBar.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(view: View, event: MotionEvent?): Boolean {
+                frameLayoutWidth = binding.frameLayout.width
 
                 when (event?.action) {
                     MotionEvent.ACTION_MOVE -> {
-                        if (binding.rightBar.x > event.rawX + view.width)
+                        if (binding.rightBar.x > event.rawX + view.width) {
                             view.x = event.rawX
+                            updateDuration()
+                        }
                     }
                 }
 
@@ -38,13 +36,15 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.rightBar.setOnTouchListener(object : View.OnTouchListener {
-
             override fun onTouch(view: View, event: MotionEvent?): Boolean {
+                frameLayoutWidth = binding.frameLayout.width
+
                 when (event?.action) {
                     MotionEvent.ACTION_MOVE -> {
                         if (binding.leftBar.x < event.rawX - view.width) {
                             if (event.rawX < binding.frameLayout.width - view.width) {
                                 view.x = event.rawX
+                                updateDuration()
                             }
                         }
                     }
@@ -55,27 +55,10 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    fun updateDuration() {
+        val diff = (binding.rightBar.x - binding.leftBar.x).toInt()
+        val duration = mapToCustomRange(diff, 0, binding.frameLayout.width, 5000)
+        binding.textView.text = getDisplayableTimeFormat(duration)
 
-    fun convertTimeFormat(second: Int): Triple<Int, Int, Int> {
-        val hours = second / 3600
-        val minutes = (second % 3600) / 60
-        val remainingSeconds = second % 60
-        return Triple(hours, minutes, remainingSeconds)
-    }
-
-    fun getDisplayableTimeFormat(second: Int): CharSequence? {
-        val (hours, minutes, seconds) = convertTimeFormat(second)
-        var outputString = ""
-
-        if (hours != 0)
-            outputString += "$hours hours"
-        if (minutes != 0)
-            outputString += " $minutes minutes"
-
-        return "$outputString $seconds seconds"
-    }
-
-    fun displayLog(message: String) {
-        Log.i(TAG, message)
     }
 }
