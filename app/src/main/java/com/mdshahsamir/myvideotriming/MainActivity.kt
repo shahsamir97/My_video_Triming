@@ -10,9 +10,6 @@ import com.mdshahsamir.myvideotriming.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private var leftBarInitialWidth: Int = 0
-    private var rightBarInitialWidth: Int = 0
-    private var isDragging = false
     private val TAG = this::class.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,39 +18,33 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        leftBarInitialWidth = binding.leftBar.width
-        rightBarInitialWidth = binding.rightBar.width
-
-
         binding.leftBar.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(view: View, event: MotionEvent?): Boolean {
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> isDragging = true
 
-                    MotionEvent.ACTION_MOVE -> if (isDragging) {
+                when (event?.action) {
+                    MotionEvent.ACTION_MOVE -> {
                         if (binding.rightBar.x > event.rawX + view.width)
                             view.x = event.rawX
                     }
-
-                    MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> isDragging = false
                 }
 
                 return true
             }
         })
 
+        val rightBarInitialPos = binding.rightBar.y
+        displayLog("Inital Righ Pos" + rightBarInitialPos)
         binding.rightBar.setOnTouchListener(object : View.OnTouchListener{
             override fun onTouch(view: View, event: MotionEvent?): Boolean {
                 when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> isDragging = true
 
-                    MotionEvent.ACTION_MOVE -> if (isDragging) {
-                        if (binding.leftBar.x < event.rawX - view.width)
-                        view.x = event.rawX
+                    MotionEvent.ACTION_MOVE -> {
+                        displayLog("view x"+view.x)
+                        displayLog("event x"+event.rawX)
+                        if (binding.leftBar.x < event.rawX - view.width) {
+                            view.x = event.rawX
+                        }
                     }
-
-                    MotionEvent.ACTION_UP,
-                    MotionEvent.ACTION_CANCEL -> isDragging = false
                 }
 
                 return true
