@@ -1,5 +1,7 @@
 package com.mdshahsamir.myvideotriming
 
+import android.R.attr.x
+import android.R.attr.y
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -7,10 +9,13 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.mdshahsamir.myvideotriming.databinding.ActivityMainBinding
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val TAG = this::class.simpleName
+    private var lastX = 0
+    private var lastY = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,17 +37,15 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        val rightBarInitialPos = binding.rightBar.y
-        displayLog("Inital Righ Pos" + rightBarInitialPos)
-        binding.rightBar.setOnTouchListener(object : View.OnTouchListener{
+        binding.rightBar.setOnTouchListener(object : View.OnTouchListener {
+
             override fun onTouch(view: View, event: MotionEvent?): Boolean {
                 when (event?.action) {
-
                     MotionEvent.ACTION_MOVE -> {
-                        displayLog("view x"+view.x)
-                        displayLog("event x"+event.rawX)
                         if (binding.leftBar.x < event.rawX - view.width) {
-                            view.x = event.rawX
+                            if (event.rawX < binding.frameLayout.width - view.width) {
+                                view.x = event.rawX
+                            }
                         }
                     }
                 }
