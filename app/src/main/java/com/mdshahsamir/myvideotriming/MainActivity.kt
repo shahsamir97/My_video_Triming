@@ -11,6 +11,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val TAG = this::class.simpleName
     private var frameLayoutWidth = 0
+    private val CONTENT_TIME = 5000F
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
                     MotionEvent.ACTION_MOVE -> {
                         if (binding.rightBar.x > event.rawX + view.width) {
                             view.x = event.rawX
+                            binding.leftBarText.text = "LeftBar Pos: " + view.x.toString()
                             updateDuration()
                         }
                     }
@@ -38,12 +40,12 @@ class MainActivity : AppCompatActivity() {
         binding.rightBar.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(view: View, event: MotionEvent?): Boolean {
                 frameLayoutWidth = binding.frameLayout.width
-
                 when (event?.action) {
                     MotionEvent.ACTION_MOVE -> {
                         if (binding.leftBar.x < event.rawX - view.width) {
                             if (event.rawX < binding.frameLayout.width - view.width) {
                                 view.x = event.rawX
+                                binding.rightBarText.text = "RightBar Pos: " + view.x.toString()
                                 updateDuration()
                             }
                         }
@@ -53,12 +55,14 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         })
+
+        binding.textView.text = getDisplayableTimeFormat(CONTENT_TIME)
     }
 
     fun updateDuration() {
-        val diff = (binding.rightBar.x - binding.leftBar.x).toInt()
-        val duration = mapToCustomRange(diff, 0, binding.frameLayout.width, 5000)
+        val trimBarsWidth = binding.leftBar.width
+        val diff = (binding.rightBar.x - binding.leftBar.x) - trimBarsWidth
+        val duration = mapToCustomRange(diff, 0F, binding.frameLayout.width.toFloat(), CONTENT_TIME.toFloat())
         binding.textView.text = getDisplayableTimeFormat(duration)
-
     }
 }

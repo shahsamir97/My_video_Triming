@@ -13,34 +13,34 @@ fun reverseCustomRangeMapping(
 }
 
 fun mapToCustomRange(
-    number: Int,
-    minValue: Int,
-    maxValue: Int,
-    customMax: Int
-): Int {
+    number: Float,
+    minValue: Float,
+    maxValue: Float,
+    customMax: Float
+): Float {
     val clampedNumber =
         if (number < minValue) minValue else if (number > maxValue) maxValue else number
 
     return customMax * (clampedNumber - minValue) / (maxValue - minValue)
 }
 
-fun convertTimeFormat(second: Int): Triple<Int, Int, Int> {
+fun convertTimeFormat(second: Float): Triple<Float, Float, Float> {
     val hours = second / 3600
     val minutes = (second % 3600) / 60
     val remainingSeconds = second % 60
     return Triple(hours, minutes, remainingSeconds)
 }
 
-fun getDisplayableTimeFormat(second: Int): CharSequence? {
+fun getDisplayableTimeFormat(second: Float): CharSequence? {
     val (hours, minutes, seconds) = convertTimeFormat(second)
     var outputString = ""
 
-    if (hours != 0)
-        outputString += "$hours hours"
-    if (minutes != 0)
-        outputString += " $minutes minutes"
+    if (hours != 0F)
+        outputString += "${hours.toInt()} hours"
+    if (minutes != 0F)
+        outputString += " ${minutes.toInt()} minutes"
 
-    return "$outputString $seconds seconds"
+    return "$outputString ${seconds.toInt()} seconds"
 }
 
 fun displayLog(message: String) {
