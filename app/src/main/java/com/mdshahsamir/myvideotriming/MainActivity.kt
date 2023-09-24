@@ -1,6 +1,8 @@
 package com.mdshahsamir.myvideotriming
 
+import android.content.Context
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +14,8 @@ class MainActivity : AppCompatActivity() {
     private val TAG = this::class.simpleName
     private var frameLayoutWidth = 0
     private val CONTENT_TIME = 5000F
+    private var isDragging = false
+    var diff = 0F
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,18 +23,40 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        var initialX: Float = 0f
+        var initialTouchX: Float = 0f
+
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+            updateDuration()
+        }
+
         binding.leftBar.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(view: View, event: MotionEvent?): Boolean {
                 frameLayoutWidth = binding.frameLayout.width
 
                 when (event?.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        initialX = view.x
+                        initialTouchX = event.rawX
+                        isDragging = true
+                    }
+
                     MotionEvent.ACTION_MOVE -> {
-                        if (binding.rightBar.x > event.rawX + view.width) {
-                            view.x = event.rawX
-                            binding.leftBarText.text = "LeftBar Pos: " + view.x.toString()
-                            updateDuration()
+                        if (isDragging) {
+                            val deltaX = event.rawX - initialTouchX
+                            val newX = initialX + deltaX
+
+                            val maxX = (view.parent as View).width - (view.width * 2)
+                            val minX = 0f
+                            if (newX >= minX && newX <= maxX && newX < binding.rightBar.x - binding.rightBar.width * 2) {
+                                view.x = newX
+                                binding.rightBarText.text = "LeftBar Pos: " + view.x.toString()
+                                updateDuration()
+                            }
                         }
                     }
+
+                    MotionEvent.ACTION_UP -> isDragging = false
                 }
 
                 return true
@@ -41,13 +67,22 @@ class MainActivity : AppCompatActivity() {
             override fun onTouch(view: View, event: MotionEvent?): Boolean {
                 frameLayoutWidth = binding.frameLayout.width
                 when (event?.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        initialX = view.x
+                        initialTouchX = event.rawX
+                        isDragging = true
+                    }
+
                     MotionEvent.ACTION_MOVE -> {
-                        if (binding.leftBar.x < event.rawX - view.width) {
-                            if (event.rawX < binding.frameLayout.width - view.width) {
-                                view.x = event.rawX
-                                binding.rightBarText.text = "RightBar Pos: " + view.x.toString()
-                                updateDuration()
-                            }
+                        val deltaX = event.rawX - initialTouchX
+                        val newX = initialX + deltaX
+
+                        val maxX = (view.parent as View).width - view.width
+                        val minX = 0f + view.width
+                        if (newX >= minX && newX <= maxX && newX - view.width * 2 > binding.leftBar.x) {
+                            view.x = newX
+                            binding.rightBarText.text = "RightBar Pos: " + view.x.toString()
+                            updateDuration()
                         }
                     }
                 }
@@ -59,10 +94,16 @@ class MainActivity : AppCompatActivity() {
         binding.textView.text = getDisplayableTimeFormat(CONTENT_TIME)
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateDuration()
+    }
+
     fun updateDuration() {
         val trimBarsWidth = binding.leftBar.width
-        val diff = (binding.rightBar.x - binding.leftBar.x) - trimBarsWidth
-        val duration = mapToCustomRange(diff, 0F, binding.frameLayout.width.toFloat(), CONTENT_TIME.toFloat())
+        diff = (binding.rightBar.x - binding.leftBar.x) - trimBarsWidth
+        val duration =
+            mapToCustomRange(diff, 0F, binding.frameLayout.width.toFloat(), CONTENT_TIME.toFloat())
         binding.textView.text = getDisplayableTimeFormat(duration)
     }
 }
