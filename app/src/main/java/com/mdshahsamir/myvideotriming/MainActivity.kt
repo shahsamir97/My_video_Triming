@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                             val newX = initialX + deltaX
 
                             val maxX = (view.parent as View).width - (view.width * 2)
-                            val minX = 0L
+                            val minX = 0F
                             if (newX >= minX && newX <= maxX && newX < binding.rightBar.x - binding.rightBar.width) {
                                 updateDuration()
                                 if (MIN_TIME_LIMIT < duration)
