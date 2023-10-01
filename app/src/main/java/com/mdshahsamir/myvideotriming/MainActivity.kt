@@ -29,10 +29,6 @@ class MainActivity : AppCompatActivity() {
         var initialX = 0f
         var initialTouchX = 0f
 
-        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
-           // updateDuration()
-        }
-
         binding.leftBar.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(view: View, event: MotionEvent?): Boolean {
                 frameLayoutWidth = binding.frameLayout.width
@@ -43,7 +39,6 @@ class MainActivity : AppCompatActivity() {
                         initialTouchX = event.rawX
                         isDragging = true
                     }
-
                     MotionEvent.ACTION_MOVE -> {
                         if (isDragging) {
                             val deltaX = event.rawX - initialTouchX
@@ -61,7 +56,6 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
-
                     MotionEvent.ACTION_UP -> isDragging = false
                 }
 
@@ -96,10 +90,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
-
-                    MotionEvent.ACTION_UP -> {
-                        isDragging = false
-                    }
+                    MotionEvent.ACTION_UP ->  isDragging = false
                 }
 
                 return true
@@ -119,9 +110,11 @@ class MainActivity : AppCompatActivity() {
         diff = (binding.rightBar.x - binding.leftBar.x) - trimBarsWidth
         duration = timeRange(diff)
         Log.i(this::class.simpleName, duration.toString())
+
         if (duration < MIN_TIME_LIMIT) {
             duration = MIN_TIME_LIMIT
         }
+
         binding.textView.text = getDisplayableTimeFormat(duration)
     }
 
