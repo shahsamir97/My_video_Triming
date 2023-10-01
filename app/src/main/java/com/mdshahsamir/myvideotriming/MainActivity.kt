@@ -43,16 +43,20 @@ class MainActivity : AppCompatActivity() {
                         if (isDragging) {
                             val deltaX = event.rawX - initialTouchX
                             val newX = initialX + deltaX
-
+                            Log.i(this::class.simpleName, newX.toString())
                             val maxX = (view.parent as View).width - (view.width * 2)
                             val minX = 0F
                             if (newX >= minX && newX <= maxX && newX < binding.rightBar.x - binding.rightBar.width) {
                                 updateDuration()
-                                if (MIN_TIME_LIMIT < duration)
+                                if (MIN_TIME_LIMIT < duration) {
                                     view.x = newX
+                                }
                                 else if (newX < view.x) {
                                     view.x = newX
                                 }
+                            } else if (newX < minX) {
+                                view.x = 0F
+                                updateDuration()
                             }
                         }
                     }
@@ -82,11 +86,15 @@ class MainActivity : AppCompatActivity() {
                             val minX = 0F + view.width
                             if (newX >= minX && newX <= maxX && newX - view.width > binding.leftBar.x) {
                                 updateDuration()
-                                if (MIN_TIME_LIMIT < duration)
+                                if (MIN_TIME_LIMIT < duration) {
                                     view.x = newX
+                                }
                                 else if (newX > view.x) {
                                     view.x = newX
                                 }
+                            }  else if (newX > maxX) {
+                                view.x = maxX.toFloat()
+                                updateDuration()
                             }
                         }
                     }
@@ -109,7 +117,6 @@ class MainActivity : AppCompatActivity() {
         val trimBarsWidth = binding.leftBar.width + 1
         diff = (binding.rightBar.x - binding.leftBar.x) - trimBarsWidth
         duration = timeRange(diff)
-        Log.i(this::class.simpleName, duration.toString())
 
         if (duration < MIN_TIME_LIMIT) {
             duration = MIN_TIME_LIMIT
