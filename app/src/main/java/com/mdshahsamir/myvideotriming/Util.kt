@@ -2,16 +2,6 @@ package com.mdshahsamir.myvideotriming
 
 import android.util.Log
 
-fun reverseCustomRangeMapping(
-    mappedValue: Int,
-    minValue: Int,
-    maxValue: Int,
-    customMax: Int
-): Int {
-
-    return (mappedValue / customMax) * (maxValue - minValue) + minValue
-}
-
 fun mapToCustomRange(
     number: Float,
     minValue: Float,
