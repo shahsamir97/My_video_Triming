@@ -13,8 +13,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var frameLayoutWidth = 0
     private val CONTENT_TIME = 2000F
-    private val MIN_TIME_LIMIT = 20F
+    private val MIN_TIME_LIMIT = 22F
     private var isDragging = false
+    val MIN_DISTANCE = 10
     var diff = 0F
     var duration = 0F
 
@@ -43,19 +44,24 @@ class MainActivity : AppCompatActivity() {
                         if (isDragging) {
                             val deltaX = event.rawX - initialTouchX
                             val newX = initialX + deltaX
-                            Log.i(this::class.simpleName, newX.toString())
+
                             val maxX = (view.parent as View).width - (view.width * 2)
                             val minX = 0F
+
                             if (newX >= minX && newX <= maxX && newX < binding.rightBar.x - binding.rightBar.width) {
-                                updateDuration()
                                 if (MIN_TIME_LIMIT < duration) {
                                     view.x = newX
                                 }
                                 else if (newX < view.x) {
                                     view.x = newX
                                 }
+                                updateDuration()
                             } else if (newX < minX) {
                                 view.x = 0F
+                                updateDuration()
+                            }
+                            else if (newX > binding.rightBar.x - binding.rightBar.width) {
+                                view.x = binding.rightBar.x - binding.rightBar.width - 10
                                 updateDuration()
                             }
                         }
@@ -85,15 +91,19 @@ class MainActivity : AppCompatActivity() {
                             val maxX = (view.parent as View).width - view.width
                             val minX = 0F + view.width
                             if (newX >= minX && newX <= maxX && newX - view.width > binding.leftBar.x) {
-                                updateDuration()
                                 if (MIN_TIME_LIMIT < duration) {
                                     view.x = newX
                                 }
                                 else if (newX > view.x) {
                                     view.x = newX
                                 }
+                                updateDuration()
                             }  else if (newX > maxX) {
                                 view.x = maxX.toFloat()
+                                updateDuration()
+                            }
+                            else if (newX - view.width < binding.leftBar.x) {
+                                view.x = binding.leftBar.x + view.width + 10
                                 updateDuration()
                             }
                         }

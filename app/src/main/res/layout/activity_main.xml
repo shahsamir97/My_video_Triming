@@ -31,6 +31,7 @@
         <View
             android:id="@+id/leftBar"
             android:layout_width="15dp"
+            android:paddingRight="5dp"
             android:layout_height="match_parent"
             android:layout_gravity="left"
             android:background="@android:color/black"
@@ -39,6 +40,7 @@
         <View
             android:id="@+id/rightBar"
             android:layout_width="15dp"
+            android:paddingLeft="5dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"
             android:background="@android:color/holo_red_dark"
