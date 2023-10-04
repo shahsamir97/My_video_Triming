@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var frameLayoutWidth = 0
     private val CONTENT_TIME = 2000F
-    private val MIN_TIME_LIMIT = 10F
+    private val MIN_TIME_LIMIT = 5F
     private var isDragging = false
     var diff = 0F
     var duration = 0F
@@ -112,8 +112,6 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         })
-
-        binding.textView.text = getDisplayableTimeFormat(CONTENT_TIME)
     }
 
     override fun onResume() {
