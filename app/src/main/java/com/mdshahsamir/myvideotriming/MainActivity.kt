@@ -1,11 +1,9 @@
 package com.mdshahsamir.myvideotriming
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.media3.exoplayer.ExoPlayer
 import com.mdshahsamir.myvideotriming.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -13,13 +11,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var frameLayoutWidth = 0
     private val CONTENT_TIME = 2000F
-    private val MIN_TIME_LIMIT = 22F
+    private val MIN_TIME_LIMIT = 10F
     private var isDragging = false
-    val MIN_DISTANCE = 10
     var diff = 0F
     var duration = 0F
-
-    val player by lazy { ExoPlayer.Builder(this).build() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +35,7 @@ class MainActivity : AppCompatActivity() {
                         initialTouchX = event.rawX
                         isDragging = true
                     }
+
                     MotionEvent.ACTION_MOVE -> {
                         if (isDragging) {
                             val deltaX = event.rawX - initialTouchX
@@ -48,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                             val maxX = (view.parent as View).width - (view.width * 2)
                             val minX = 0F
 
-                            if (newX >= minX && newX <= maxX && newX < binding.rightBar.x - binding.rightBar.width) {
+                            if (newX >= minX && newX <= maxX && newX < binding.rightBar.x - binding.rightBar.width - 1) {
                                 if (MIN_TIME_LIMIT < duration) {
                                     view.x = newX
                                 }
@@ -61,11 +57,12 @@ class MainActivity : AppCompatActivity() {
                                 updateDuration()
                             }
                             else if (newX > binding.rightBar.x - binding.rightBar.width) {
-                                view.x = binding.rightBar.x - binding.rightBar.width - 10
+                                view.x = binding.rightBar.x - binding.rightBar.width - 1
                                 updateDuration()
                             }
                         }
                     }
+
                     MotionEvent.ACTION_UP -> isDragging = false
                 }
 
@@ -90,7 +87,7 @@ class MainActivity : AppCompatActivity() {
 
                             val maxX = (view.parent as View).width - view.width
                             val minX = 0F + view.width
-                            if (newX >= minX && newX <= maxX && newX - view.width > binding.leftBar.x) {
+                            if (newX >= minX && newX <= maxX && newX - view.width > binding.leftBar.x + 1) {
                                 if (MIN_TIME_LIMIT < duration) {
                                     view.x = newX
                                 }
@@ -103,11 +100,12 @@ class MainActivity : AppCompatActivity() {
                                 updateDuration()
                             }
                             else if (newX - view.width < binding.leftBar.x) {
-                                view.x = binding.leftBar.x + view.width + 10
+                                view.x = binding.leftBar.x + view.width + 1
                                 updateDuration()
                             }
                         }
                     }
+
                     MotionEvent.ACTION_UP ->  isDragging = false
                 }
 
