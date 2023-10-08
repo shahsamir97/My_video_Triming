@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     var duration = 0F
 
     var startTime = 0F
-    var endTime = 0F
+    var endTime = CONTENT_TIME - MIN_TIME_LIMIT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,23 +53,23 @@ class MainActivity : AppCompatActivity() {
                             if (newX >= minX && newX <= maxX && newX < binding.rightBar.x - binding.rightBar.width - 1) {
                                 if (MIN_TIME_LIMIT < duration) {
                                     view.x = newX
-                                }
-                                else if (newX < view.x) {
+                                } else if (newX < view.x) {
                                     view.x = newX
                                 }
                                 updateDuration()
                             } else if (newX < minX) {
                                 view.x = 0F
                                 updateDuration()
-                            }
-                            else if (newX > binding.rightBar.x - binding.rightBar.width) {
+                            } else if (newX > binding.rightBar.x - binding.rightBar.width) {
                                 view.x = binding.rightBar.x - binding.rightBar.width - 1
                                 updateDuration()
                             }
+
                             calculateEachSliderTime(
                                 view.x - 1,
                                 binding.leftbarTime,
-                                "Left Slider Time : ")
+                                "Left Slider Time : "
+                            )
                         }
                     }
 
@@ -101,24 +101,27 @@ class MainActivity : AppCompatActivity() {
                             if (newX >= minX && newX <= maxX && newX - view.width > binding.leftBar.x + 1) {
                                 if (MIN_TIME_LIMIT < duration) {
                                     view.x = newX
-                                }
-                                else if (newX > view.x) {
+                                } else if (newX > view.x) {
                                     view.x = newX
                                 }
                                 updateDuration()
                             } else if (newX > maxX) {
                                 view.x = maxX.toFloat()
                                 updateDuration()
-                            }
-                            else if (newX - view.width < binding.leftBar.x) {
+                            } else if (newX - view.width < binding.leftBar.x) {
                                 view.x = binding.leftBar.x + view.width + 1
                                 updateDuration()
                             }
-                            calculateEachSliderTime(view.x - view.width + 1, binding.rightbarTime,"Right Slider Time : ")
+
+                            calculateEachSliderTime(
+                                view.x - view.width + 1,
+                                binding.rightbarTime,
+                                "Right Slider Time : "
+                            )
                         }
                     }
 
-                    MotionEvent.ACTION_UP ->  isDragging = false
+                    MotionEvent.ACTION_UP -> isDragging = false
                 }
 
                 return true
@@ -128,6 +131,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun calculateEachSliderTime(positionX: Float, textView: TextView, message: String) {
         val seconds = timeRange(positionX)
+
+        if (textView.id == R.id.leftbarTime) {
+            startTime = seconds
+        } else {
+            endTime = seconds
+        }
+
         textView.text = message + getDisplayableTimeFormat(seconds)
     }
 
@@ -140,10 +150,10 @@ class MainActivity : AppCompatActivity() {
         val trimBarsWidth = binding.leftBar.width
         diff = (binding.rightBar.x - binding.leftBar.x) - trimBarsWidth
 
-        Log.i(TAG,"Right Width : "+ binding.rightBar.width.toString())
-        Log.i(TAG,"Right X : "+ binding.rightBar.x.toString())
-        Log.i(TAG,"Left X : "+ binding.leftBar.x.toString())
-        Log.i(TAG,"Diff : " + diff.toString())
+        Log.i(TAG, "Right Width : " + binding.rightBar.width.toString())
+        Log.i(TAG, "Right X : " + binding.rightBar.x.toString())
+        Log.i(TAG, "Left X : " + binding.leftBar.x.toString())
+        Log.i(TAG, "Diff : " + diff.toString())
 
         duration = timeRange(diff)
 
@@ -157,6 +167,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun timeRange(diff: Float): Float {
-        return mapToCustomRange(number = diff, minValue = 0F, maxValue = binding.frameLayout.width.toFloat() - binding.rightBar.width * 2, customMax = CONTENT_TIME)
+        return mapToCustomRange(
+            number = diff,
+            minValue = 0F,
+            maxValue = binding.frameLayout.width.toFloat() - binding.rightBar.width * 2,
+            customMax = CONTENT_TIME
+        )
     }
 }
