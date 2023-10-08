@@ -33,7 +33,7 @@
             android:layout_width="15dp"
             android:layout_height="match_parent"
             android:layout_gravity="left"
-            android:background="@android:color/black"
+            android:background="@drawable/slider_bar_background"
             android:padding="16dp" />
 
         <View
@@ -41,7 +41,7 @@
             android:layout_width="15dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"
-            android:background="@android:color/holo_red_dark"
+            android:background="@drawable/slider_bar_background"
             android:padding="16dp" />
 
     </FrameLayout>
@@ -54,5 +54,23 @@
         app:layout_constraintTop_toBottomOf="@+id/frameLayout"
         app:layout_constraintStart_toStartOf="@+id/frameLayout"
         tools:layout_editor_absoluteY="680dp" />
+
+    <TextView
+        android:id="@+id/rightbarTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/leftbarTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/rightbarTime"
+        app:layout_constraintTop_toBottomOf="@+id/rightbarTime" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

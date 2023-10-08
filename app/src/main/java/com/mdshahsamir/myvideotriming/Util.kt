@@ -9,9 +9,22 @@ fun mapToCustomRange(
     customMax: Float
 ): Float {
     val clampedNumber =
-        if (number < minValue) minValue else if (number > maxValue) maxValue else number
+        if (number <= minValue) minValue else if (number >= maxValue) maxValue else number
 
     return customMax * (clampedNumber - minValue) / (maxValue - minValue)
+}
+
+fun scaleValueToRange(value: Float, minRange: Float, maxRange: Float): Float {
+    // Check if the value is already within the desired range
+    if (value < minRange) {
+        return minRange
+    } else if (value > maxRange) {
+        return maxRange
+    } else {
+        // Scale the value to the desired range
+        val scaledValue = (value - minRange) / (maxRange - minRange)
+        return scaledValue
+    }
 }
 
 fun convertTimeFormat(second: Float): Triple<Float, Float, Float> {
@@ -21,7 +34,7 @@ fun convertTimeFormat(second: Float): Triple<Float, Float, Float> {
     return Triple(hours, minutes, remainingSeconds)
 }
 
-fun getDisplayableTimeFormat(second: Float): CharSequence? {
+fun getDisplayableTimeFormat(second: Float): CharSequence {
     val (hours, minutes, seconds) = convertTimeFormat(second)
     var outputString = ""
 
