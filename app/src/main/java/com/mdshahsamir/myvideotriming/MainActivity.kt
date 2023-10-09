@@ -2,6 +2,7 @@ package com.mdshahsamir.myvideotriming
 
 import android.os.Bundle
 import android.util.Log
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
 
     var startTime = 0F
     var endTime = CONTENT_TIME - MIN_TIME_LIMIT
+    var isLongPress = false
+    var initialWidthOfFrame = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,19 +34,36 @@ class MainActivity : AppCompatActivity() {
         var initialX = 0f
         var initialTouchX = 0f
 
+
+        val gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onLongPress(e: MotionEvent) {
+                // Handle long press event here
+                // You can perform any actions or start any animations for long press
+                isLongPress = true
+            }
+        })
+
         binding.leftBar.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(view: View, event: MotionEvent?): Boolean {
                 frameLayoutWidth = binding.frameLayout.width
+                event?.let { gestureDetector.onTouchEvent(it) }
 
                 when (event?.action) {
                     MotionEvent.ACTION_DOWN -> {
                         initialX = view.x
                         initialTouchX = event.rawX
                         isDragging = true
+
+                        if (isLongPress) {
+                            // Expand the frameLayout to match the full content time
+                            val layoutParams = binding.frameLayout.layoutParams
+                            layoutParams.width = CONTENT_TIME.toInt()
+                            binding.frameLayout.layoutParams = layoutParams
+                        }
                     }
 
                     MotionEvent.ACTION_MOVE -> {
-                        if (isDragging) {
+                        if (isDragging && !isLongPress) {
                             val deltaX = event.rawX - initialTouchX
                             val newX = initialX + deltaX
 
@@ -73,7 +93,15 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
 
-                    MotionEvent.ACTION_UP -> isDragging = false
+                    MotionEvent.ACTION_UP -> {
+                        if (isLongPress) {
+                            // Contract the frameLayout back to its original width if it's a long press
+                            val layoutParams = binding.frameLayout.layoutParams
+                            layoutParams.width = initialWidthOfFrame
+                            binding.frameLayout.layoutParams = layoutParams
+                        }
+                        isDragging = false
+                    }
                 }
 
                 return true
