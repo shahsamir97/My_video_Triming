@@ -11,14 +11,15 @@ import com.mdshahsamir.myvideotriming.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    val TAG = this::class.simpleName
+    private val TAG = this::class.simpleName
+
     private var frameLayoutWidth = 0
     private val CONTENT_TIME = 2000F
     private val MIN_TIME_LIMIT = 5F
     private var isDragging = false
+
     var diff = 0F
     var duration = 0F
-
     var startTime = 0F
     var endTime = CONTENT_TIME - MIN_TIME_LIMIT
 
