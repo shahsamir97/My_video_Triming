@@ -155,18 +155,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleDragOnZoomedTrack(event: MotionEvent, initTouchX: Float, initX: Float) {
-        Log.i(TAG, "InitX  : "+ initX)
-        Log.i(TAG, "InitTouchX : "+ initTouchX)
-
         val deltaX = event.rawX - initTouchX
         val newX = initX + deltaX
-        Log.i(TAG, "NewX : "+ newX)
-        Log.i(TAG, "Event RawX : "+ event.rawX)
 
-
-
-        val maxX = binding.topSlider.width
-        val minX = binding.topSlider.x
+        val maxX = binding.topSlider.width - binding.zoomSlider.width
+        val minX = binding.topSlider.x + binding.zoomSlider.width
 
         if (newX <= maxX && newX >= minX) {
             binding.zoomSlider.x = newX
