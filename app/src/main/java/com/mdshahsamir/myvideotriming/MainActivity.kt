@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.mdshahsamir.myvideotriming.databinding.ActivityMainBinding
+import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,40 +42,51 @@ class MainActivity : AppCompatActivity() {
                         initialX = view.x
                         initialTouchX = event.rawX
                         isDragging = true
+                        binding.topSlider.visibility = View.VISIBLE
+                        binding.zoomSlider.x = binding.leftBar.x
                     }
 
                     MotionEvent.ACTION_MOVE -> {
                         if (isDragging) {
-                            val deltaX = event.rawX - initialTouchX
-                            val newX = initialX + deltaX
-
-                            val maxX = (view.parent as View).width - (view.width * 2)
-                            val minX = 0F
-
-                            if (newX >= minX && newX <= maxX && newX < binding.rightBar.x - binding.rightBar.width - 1) {
-                                if (MIN_TIME_LIMIT < duration) {
-                                    view.x = newX
-                                } else if (newX < view.x) {
-                                    view.x = newX
-                                }
-                                updateDuration()
-                            } else if (newX < minX) {
-                                view.x = 0F
-                                updateDuration()
-                            } else if (newX > binding.rightBar.x - binding.rightBar.width) {
-                                view.x = binding.rightBar.x - binding.rightBar.width - 1
-                                updateDuration()
+                            if (event.y < 0) {
+                                handleDragOnZoomedTrack(event, initialTouchX, initialX)
                             }
+                            else {
+                                val deltaX = event.rawX - initialTouchX
+                                val newX = initialX + deltaX
 
-                            calculateEachSliderTime(
-                                view.x - 1,
-                                binding.leftbarTime,
-                                "Left Slider Time : "
-                            )
+                                val maxX = (view.parent as View).width - (view.width * 2)
+                                val minX = 0F
+
+                                if (newX >= minX && newX <= maxX && newX < binding.rightBar.x - binding.rightBar.width - 1) {
+                                    if (MIN_TIME_LIMIT < duration) {
+                                        view.x = newX
+                                    } else if (newX < view.x) {
+                                        view.x = newX
+                                    }
+                                    updateDuration()
+                                } else if (newX < minX) {
+                                    view.x = 0F
+                                    updateDuration()
+                                } else if (newX > binding.rightBar.x - binding.rightBar.width) {
+                                    view.x = binding.rightBar.x - binding.rightBar.width - 1
+                                    updateDuration()
+                                }
+
+                                calculateEachSliderTime(
+                                    view.x - 1,
+                                    binding.leftbarTime,
+                                    "Left Slider Time : "
+                                )
+                            }
                         }
                     }
 
-                    MotionEvent.ACTION_UP -> isDragging = false
+                    MotionEvent.ACTION_UP -> {
+                        isDragging = false
+                        binding.topSlider.visibility = View.INVISIBLE
+                        binding.zoomSlider.x = 0F
+                    }
                 }
 
                 return true
@@ -88,46 +100,77 @@ class MainActivity : AppCompatActivity() {
                     MotionEvent.ACTION_DOWN -> {
                         initialX = view.x
                         initialTouchX = event.rawX
+
                         isDragging = true
+                        binding.topSlider.visibility = View.VISIBLE
+                        binding.zoomSlider.x = binding.rightBar.x
                     }
 
                     MotionEvent.ACTION_MOVE -> {
                         if (isDragging) {
-                            val deltaX = event.rawX - initialTouchX
-                            val newX = initialX + deltaX
-
-                            val maxX = (view.parent as View).width - view.width
-                            val minX = 0F + view.width
-
-                            if (newX >= minX && newX <= maxX && newX - view.width > binding.leftBar.x + 1) {
-                                if (MIN_TIME_LIMIT < duration) {
-                                    view.x = newX
-                                } else if (newX > view.x) {
-                                    view.x = newX
-                                }
-                                updateDuration()
-                            } else if (newX > maxX) {
-                                view.x = maxX.toFloat()
-                                updateDuration()
-                            } else if (newX - view.width < binding.leftBar.x) {
-                                view.x = binding.leftBar.x + view.width + 1
-                                updateDuration()
+                            if (event.y < 0) {
+                                handleDragOnZoomedTrack(event, initialTouchX, initialX)
                             }
+                            else {
+                                val deltaX = event.rawX - initialTouchX
+                                val newX = initialX + deltaX
 
-                            calculateEachSliderTime(
-                                view.x - view.width + 1,
-                                binding.rightbarTime,
-                                "Right Slider Time : "
-                            )
-                        }
+                                val maxX = (view.parent as View).width - view.width
+                                val minX = 0F + view.width
+
+                                if (newX >= minX && newX <= maxX && newX - view.width > binding.leftBar.x + 1) {
+                                    if (MIN_TIME_LIMIT < duration) {
+                                        view.x = newX
+                                    } else if (newX > view.x) {
+                                        view.x = newX
+                                    }
+                                    updateDuration()
+                                } else if (newX > maxX) {
+                                    view.x = maxX.toFloat()
+                                    updateDuration()
+                                } else if (newX - view.width < binding.leftBar.x) {
+                                    view.x = binding.leftBar.x + view.width + 1
+                                    updateDuration()
+                                }
+
+                                calculateEachSliderTime(
+                                    view.x - view.width + 1,
+                                    binding.rightbarTime,
+                                    "Right Slider Time : "
+                                )
+                            }
+                            }
                     }
 
-                    MotionEvent.ACTION_UP -> isDragging = false
+                    MotionEvent.ACTION_UP -> {
+                        isDragging = false
+                        binding.topSlider.visibility = View.INVISIBLE
+                        binding.zoomSlider.x = 0F
+                    }
                 }
 
                 return true
             }
         })
+    }
+
+    private fun handleDragOnZoomedTrack(event: MotionEvent, initTouchX: Float, initX: Float) {
+        Log.i(TAG, "InitX  : "+ initX)
+        Log.i(TAG, "InitTouchX : "+ initTouchX)
+
+        val deltaX = event.rawX - initTouchX
+        val newX = initX + deltaX
+        Log.i(TAG, "NewX : "+ newX)
+        Log.i(TAG, "Event RawX : "+ event.rawX)
+
+
+
+        val maxX = binding.topSlider.width
+        val minX = binding.topSlider.x
+
+        if (newX <= maxX && newX >= minX) {
+            binding.zoomSlider.x = newX
+        }
     }
 
     private fun calculateEachSliderTime(positionX: Float, textView: TextView, message: String) {
@@ -150,15 +193,7 @@ class MainActivity : AppCompatActivity() {
     fun updateDuration() {
         val trimBarsWidth = binding.leftBar.width
         diff = (binding.rightBar.x - binding.leftBar.x) - trimBarsWidth
-
-        Log.i(TAG, "Right Width : " + binding.rightBar.width.toString())
-        Log.i(TAG, "Right X : " + binding.rightBar.x.toString())
-        Log.i(TAG, "Left X : " + binding.leftBar.x.toString())
-        Log.i(TAG, "Diff : " + diff.toString())
-
         duration = timeRange(diff)
-
-        Log.i(TAG, "Duration : " + duration.toString())
 
         if (duration < MIN_TIME_LIMIT) {
             duration = MIN_TIME_LIMIT
