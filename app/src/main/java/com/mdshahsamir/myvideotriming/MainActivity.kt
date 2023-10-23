@@ -3,6 +3,7 @@ package com.mdshahsamir.myvideotriming
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
+import android.view.VelocityTracker
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val TAG = this::class.simpleName
+    private val velocityTracker: VelocityTracker by lazy {
+        VelocityTracker.obtain()
+    }
 
     private var frameLayoutWidth = 0
     private val CONTENT_TIME = 2000F
@@ -42,15 +46,30 @@ class MainActivity : AppCompatActivity() {
                         initialX = view.x
                         initialTouchX = event.rawX
                         isDragging = true
-                        binding.topSlider.visibility = View.VISIBLE
-                        binding.zoomSlider.x = binding.leftBar.x
+                        velocityTracker.clear()
                     }
 
                     MotionEvent.ACTION_MOVE -> {
+                        velocityTracker.addMovement(event)
+                        velocityTracker.computeCurrentVelocity(1000)
+                        Log.i(TAG, velocityTracker.xVelocity.toString())
+
                         if (isDragging) {
-                            if (event.y < 0) {
-                                handleDragOnZoomedTrack(event, initialTouchX, initialX, view)
-                            } else {
+                            if (velocityTracker.xVelocity == 0F) {
+                                Log.i(TAG, "Velocity Within -300 to 300")
+                                val deltaX = event.rawX - initialTouchX
+                                val newX = initialX + deltaX
+
+                                val maxX = (view.parent as View).width - view.width
+                                val minStep = (maxX / CONTENT_TIME) / 5
+
+                                if (newX < view.x) {
+                                    view.x -= minStep
+                                } else {
+                                    view.x += minStep
+                                }
+                                //handleDragOnZoomedTrack(event, initialTouchX, initialX, view)
+                            }  else {
                                 val deltaX = event.rawX - initialTouchX
                                 val newX = initialX + deltaX
 
@@ -69,14 +88,14 @@ class MainActivity : AppCompatActivity() {
                                 } else if (newX > binding.rightBar.x - binding.rightBar.width) {
                                     view.x = binding.rightBar.x - binding.rightBar.width - 1
                                 }
-
-                                calculateEachSliderTime(
-                                    view.x - 1,
-                                    binding.leftbarTime,
-                                    "Left Slider Time : "
-                                )
-                                updateDuration()
                             }
+
+                            calculateEachSliderTime(
+                                view.x - 1,
+                                binding.leftbarTime,
+                                "Left Slider Time : "
+                            )
+                            updateDuration()
                         }
                     }
 
@@ -84,6 +103,7 @@ class MainActivity : AppCompatActivity() {
                         isDragging = false
                         binding.topSlider.visibility = View.INVISIBLE
                         binding.zoomSlider.x = 0F
+                        velocityTracker.clear()
                     }
                 }
 
@@ -98,17 +118,33 @@ class MainActivity : AppCompatActivity() {
                     MotionEvent.ACTION_DOWN -> {
                         initialX = view.x
                         initialTouchX = event.rawX
-
                         isDragging = true
-                        binding.topSlider.visibility = View.VISIBLE
-                        binding.zoomSlider.x = binding.rightBar.x
+                        velocityTracker.clear()
                     }
 
                     MotionEvent.ACTION_MOVE -> {
+                        velocityTracker.addMovement(event)
+                        velocityTracker.computeCurrentVelocity(1000)
+                        Log.i(TAG, "Velocity "+ velocityTracker.xVelocity)
                         if (isDragging) {
-                            if (event.y < 0) {
-                                handleDragOnZoomedTrack(event, initialTouchX, initialX, view)
+                            if (velocityTracker.xVelocity == 0F) {
+                                Log.i(TAG, "Velocity Within -300 to 300")
+                                val deltaX = event.rawX - initialTouchX
+                                val newX = initialX + deltaX
+
+                                val maxX = (view.parent as View).width - view.width
+                                val minStep = (maxX / CONTENT_TIME) / 4
+
+                                if (newX < view.x) {
+                                    view.x -= minStep
+                                } else {
+                                    view.x += minStep
+                                }
+
+                                //handleDragOnZoomedTrack(event, initialTouchX, initialX, view)
                             } else {
+                                Log.i(TAG, "Velocity NOt Within -300 to 300")
+
                                 val deltaX = event.rawX - initialTouchX
                                 val newX = initialX + deltaX
 
@@ -127,14 +163,14 @@ class MainActivity : AppCompatActivity() {
                                 } else if (newX - view.width < binding.leftBar.x) {
                                     view.x = binding.leftBar.x + view.width + 1
                                 }
-
-                                calculateEachSliderTime(
-                                    view.x - view.width + 1,
-                                    binding.rightbarTime,
-                                    "Right Slider Time : "
-                                )
-                                updateDuration()
                             }
+
+                            calculateEachSliderTime(
+                                view.x - view.width + 1,
+                                binding.rightbarTime,
+                                "Right Slider Time : "
+                            )
+                            updateDuration()
                         }
                     }
 
@@ -142,6 +178,7 @@ class MainActivity : AppCompatActivity() {
                         isDragging = false
                         binding.topSlider.visibility = View.INVISIBLE
                         binding.zoomSlider.x = 0F
+                        velocityTracker.clear()
                     }
                 }
 
