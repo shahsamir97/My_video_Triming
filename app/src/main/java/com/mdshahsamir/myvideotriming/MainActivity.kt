@@ -49,9 +49,8 @@ class MainActivity : AppCompatActivity() {
                     MotionEvent.ACTION_MOVE -> {
                         if (isDragging) {
                             if (event.y < 0) {
-                                handleDragOnZoomedTrack(event, initialTouchX, initialX)
-                            }
-                            else {
+                                handleDragOnZoomedTrack(event, initialTouchX, initialX, view)
+                            } else {
                                 val deltaX = event.rawX - initialTouchX
                                 val newX = initialX + deltaX
 
@@ -109,9 +108,8 @@ class MainActivity : AppCompatActivity() {
                     MotionEvent.ACTION_MOVE -> {
                         if (isDragging) {
                             if (event.y < 0) {
-                                handleDragOnZoomedTrack(event, initialTouchX, initialX)
-                            }
-                            else {
+                                handleDragOnZoomedTrack(event, initialTouchX, initialX, view)
+                            } else {
                                 val deltaX = event.rawX - initialTouchX
                                 val newX = initialX + deltaX
 
@@ -139,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                                     "Right Slider Time : "
                                 )
                             }
-                            }
+                        }
                     }
 
                     MotionEvent.ACTION_UP -> {
@@ -154,12 +152,37 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun handleDragOnZoomedTrack(event: MotionEvent, initTouchX: Float, initX: Float) {
+    private fun handleDragOnZoomedTrack(
+        event: MotionEvent,
+        initTouchX: Float,
+        initX: Float,
+        view: View
+    ) {
         val deltaX = event.rawX - initTouchX
         val newX = initX + deltaX
 
         val maxX = binding.topSlider.width - binding.zoomSlider.width
         val minX = binding.topSlider.x + binding.zoomSlider.width
+
+        val minStep = (maxX / CONTENT_TIME) / 5
+
+        if (view.id == R.id.rightBar) {
+            if (newX < binding.zoomSlider.x) {
+                view.x -= minStep
+            } else {
+                view.x += minStep
+            }
+            calculateEachSliderTime(view.x, binding.rightbarTime, "Right Slider Time : ")
+            updateDuration()
+        } else {
+            if (newX < binding.zoomSlider.x) {
+                view.x -= minStep
+            } else {
+                view.x += minStep
+            }
+            calculateEachSliderTime(view.x, binding.leftbarTime, "Left Slider Time : ")
+            updateDuration()
+        }
 
         if (newX <= maxX && newX >= minX) {
             binding.zoomSlider.x = newX
