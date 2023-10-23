@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity() {
                                     } else if (newX < view.x) {
                                         view.x = newX
                                     }
+
                                     updateDuration()
                                 } else if (newX < minX) {
                                     view.x = 0F
@@ -122,6 +123,7 @@ class MainActivity : AppCompatActivity() {
                                     } else if (newX > view.x) {
                                         view.x = newX
                                     }
+
                                     updateDuration()
                                 } else if (newX > maxX) {
                                     view.x = maxX.toFloat()
@@ -162,7 +164,7 @@ class MainActivity : AppCompatActivity() {
         val newX = initX + deltaX
 
         val maxX = binding.topSlider.width - binding.zoomSlider.width
-        val minX = binding.topSlider.x + binding.zoomSlider.width
+        val minX = 0F
 
         val minStep = (maxX / CONTENT_TIME) / 5
 
@@ -172,6 +174,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 view.x += minStep
             }
+
             calculateEachSliderTime(view.x, binding.rightbarTime, "Right Slider Time : ")
             updateDuration()
         } else {
@@ -180,6 +183,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 view.x += minStep
             }
+
             calculateEachSliderTime(view.x, binding.leftbarTime, "Left Slider Time : ")
             updateDuration()
         }
