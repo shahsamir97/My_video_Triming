@@ -64,13 +64,10 @@ class MainActivity : AppCompatActivity() {
                                         view.x = newX
                                     }
 
-                                    updateDuration()
                                 } else if (newX < minX) {
                                     view.x = 0F
-                                    updateDuration()
                                 } else if (newX > binding.rightBar.x - binding.rightBar.width) {
                                     view.x = binding.rightBar.x - binding.rightBar.width - 1
-                                    updateDuration()
                                 }
 
                                 calculateEachSliderTime(
@@ -78,6 +75,7 @@ class MainActivity : AppCompatActivity() {
                                     binding.leftbarTime,
                                     "Left Slider Time : "
                                 )
+                                updateDuration()
                             }
                         }
                     }
@@ -124,13 +122,10 @@ class MainActivity : AppCompatActivity() {
                                         view.x = newX
                                     }
 
-                                    updateDuration()
                                 } else if (newX > maxX) {
                                     view.x = maxX.toFloat()
-                                    updateDuration()
                                 } else if (newX - view.width < binding.leftBar.x) {
                                     view.x = binding.leftBar.x + view.width + 1
-                                    updateDuration()
                                 }
 
                                 calculateEachSliderTime(
@@ -138,6 +133,7 @@ class MainActivity : AppCompatActivity() {
                                     binding.rightbarTime,
                                     "Right Slider Time : "
                                 )
+                                updateDuration()
                             }
                         }
                     }
@@ -211,13 +207,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun updateDuration() {
-        val trimBarsWidth = binding.leftBar.width
-        diff = (binding.rightBar.x - binding.leftBar.x) - trimBarsWidth
-        duration = timeRange(diff)
-
-        if (duration < MIN_TIME_LIMIT) {
-            duration = MIN_TIME_LIMIT
-        }
+//        val trimBarsWidth = binding.leftBar.width
+//        diff = (binding.rightBar.x - binding.leftBar.x) - trimBarsWidth
+//        duration = timeRange(diff)
+//
+//        if (duration < MIN_TIME_LIMIT) {
+//            duration = MIN_TIME_LIMIT
+//        }
+         duration = endTime - startTime
 
         binding.textView.text = getDisplayableTimeFormat(duration)
     }
